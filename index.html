@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Jendela Langit | Destinasi Alam Prigen</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@200;300;400;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root { --accent: #d4a373; }
+        body { background-color: #050505; color: #fff; font-family: 'Plus Jakarta Sans', sans-serif; overflow-x: hidden; scroll-behavior: smooth; }
+        #leaf-canvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 2; pointer-events: none; }
+        .hero-bg { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: linear-gradient(to bottom, rgba(5,5,5,0.7), #050505), url('https://liburanyuk.co.id/wp-content/uploads/2020/10/@thisisthoffa-2-833x1024.jpg'); background-size: cover; background-position: center; z-index: -1; opacity: 0.5; }
+        .glass-card { background: rgba(255, 255, 255, 0.02); backdrop-filter: blur(20px); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 32px; transition: 0.4s; }
+        .hero-title { font-size: clamp(3rem, 7vw, 6rem); font-weight: 800; line-height: 0.9; letter-spacing: -0.04em; text-transform: uppercase; }
+        #full-archive-page { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #080808; z-index: 3000; display: none; overflow-y: auto; opacity: 0; transition: opacity 0.5s ease; }
+        .archive-active { display: block !important; opacity: 1 !important; }
+        .btn-main { padding: 1.2rem 2.5rem; font-size: 11px; font-weight: 800; letter-spacing: 0.2em; text-transform: uppercase; border-radius: 12px; transition: 0.4s; display: inline-block; text-align: center; cursor: pointer; border: none; }
+        .btn-fill { background: #fff; color: #000; }
+        .btn-outline { border: 1px solid rgba(255, 255, 255, 0.2); color: #fff; background: transparent; }
+        .visual-card { height: 400px; overflow: hidden; position: relative; cursor: pointer; }
+        .visual-card img { width: 100%; height: 100%; object-fit: cover; transition: 1s; }
+        .visual-overlay { position: absolute; bottom: 0; left: 0; width: 100%; padding: 40px; background: linear-gradient(to top, rgba(0,0,0,0.8), transparent); }
+        .info-p { font-size: 15px; color: rgba(255,255,255,0.6); line-height: 1.8; font-weight: 300; }
+        .info-h3 { font-size: 18px; font-weight: 700; color: #fff; margin-bottom: 1rem; text-transform: uppercase; letter-spacing: 0.1em; }
+    </style>
+</head>
+<body>
+
+    <div class="hero-bg"></div>
+    <canvas id="leaf-canvas"></canvas>
+
+    <div id="full-archive-page" class="p-6 md:p-20">
+        <div onclick="closeArchive()" class="fixed top-10 right-10 z-[3001] cursor-pointer group flex items-center gap-4">
+            <span class="text-[10px] font-bold tracking-[0.4em] uppercase opacity-40 group-hover:opacity-100">Tutup</span>
+            <div class="w-12 h-12 rounded-full border border-white/10 flex items-center justify-center group-hover:bg-white group-hover:text-black transition text-2xl">&times;</div>
+        </div>
+        <div class="max-w-7xl mx-auto">
+            <div class="mb-16">
+                <span id="arc-tag" class="text-[#d4a373] font-bold tracking-[0.8em] text-[10px] uppercase mb-4 block"></span>
+                <h2 id="arc-title" class="text-4xl md:text-6xl font-bold uppercase tracking-tighter mb-4"></h2>
+                <h4 id="arc-author" class="text-sm font-bold text-white/40 uppercase tracking-[0.3em] mb-6"></h4>
+                <p id="arc-intro" class="text-gray-400 max-w-2xl font-light italic leading-relaxed mb-8"></p>
+                <div id="arc-link-area" class="mb-8"></div>
+            </div>
+            <div id="arc-gallery" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 pb-20"></div>
+        </div>
+    </div>
+
+    <header class="relative z-50 px-8 py-10 max-w-[1400px] mx-auto flex justify-between items-center">
+        <div class="flex items-center gap-4 cursor-pointer" onclick="window.scrollTo(0,0)">
+            <div class="w-5 h-5 bg-white rotate-45"></div>
+            <span class="font-bold tracking-tighter text-xl uppercase tracking-widest">Jendela Langit</span>
+        </div>
+        <nav class="hidden md:flex gap-12 text-[10px] font-bold tracking-[0.4em] uppercase opacity-40">
+            <a href="#" class="hover:text-white transition">Beranda</a>
+            <a href="#info-section" class="hover:text-white transition">Informasi</a>
+            <a href="#arsip-section" class="hover:text-white transition">Arsip</a>
+        </nav>
+        <a href="https://uqoilulibad-star.github.io/wisata-jendela-langit/" target="_blank" class="btn-outline px-6 py-2 rounded-full text-[10px] font-bold uppercase tracking-widest transition">Tiket Online</a>
+    </header>
+
+    <main class="relative z-10 max-w-[1400px] mx-auto px-8">
+        
+        <section class="grid lg:grid-cols-2 gap-10 min-h-[80vh] items-center pt-10 pb-20">
+            <div>
+                <span class="text-[10px] font-black tracking-[0.8em] text-[#d4a373] uppercase mb-6 block">Estetika Alam Modern</span>
+                <h1 class="hero-title">Sentuh<br><span class="opacity-30">Cakrawala.</span><br>Jendela Langit</h1>
+                <p class="mt-8 text-gray-400 text-lg font-light max-w-md leading-relaxed">Eksplorasi destinasi wisata alam di lereng Gunung Arjuno yang menawarkan ketenangan dari ketinggian.</p>
+                <div class="mt-12 flex flex-wrap gap-4">
+                    <a href="https://uqoilulibad-star.github.io/wisata-jendela-langit/" target="_blank" class="btn-main btn-fill">Reservasi Sekarang</a>
+                    <a href="#arsip-section" class="btn-main btn-outline">Jelajahi Arsip</a>
+                </div>
+            </div>
+            <div class="hidden lg:flex items-center justify-center border border-white/5 rounded-[48px] h-[550px] glass-card">
+                <div class="text-center">
+                    <div class="text-[120px] font-thin tracking-tighter opacity-10 leading-none">800</div>
+                    <div class="text-[10px] font-bold tracking-[1em] uppercase opacity-20">MDPL</div>
+                </div>
+            </div>
+        </section>
+
+        <section id="landing-visual" class="py-20 border-t border-white/5">
+            <div class="mb-12">
+                <h2 class="text-xs font-black tracking-[0.6em] uppercase opacity-30 mb-2">Sorotan Visual</h2>
+                <p class="text-gray-500 font-light italic">Momen-momen tanpa kata.</p>
+            </div>
+            <div class="grid md:grid-cols-3 gap-6">
+                <div class="visual-card glass-card group" onclick="openVisualOnly(0)">
+                    <img src="https://hargacampur.com/wp-content/uploads/2023/12/Berkeliling-Kawasan-Dengan-Jip-Atau-Kuda.webp">
+                    <div class="visual-overlay">
+                        <span class="text-[10px] font-bold tracking-[0.4em] uppercase text-[#d4a373]">Transportasi</span>
+                        <h4 class="text-xl font-bold uppercase tracking-tighter">Jeep dan sepeda trill</h4>
+                    </div>
+                </div>
+                <div class="visual-card glass-card group" onclick="openVisualOnly(1)">
+                    <img src="https://kilasjatim.com/wp-content/uploads/2024/04/hipwee-images-7-6-678x422-1.jpeg">
+                    <div class="visual-overlay">
+                        <span class="text-[10px] font-bold tracking-[0.4em] uppercase text-[#d4a373]">Fotografy</span>
+                        <h4 class="text-xl font-bold uppercase tracking-tighter">Spot foto</h4>
+                    </div>
+                </div>
+                <div class="visual-card glass-card group" onclick="openVisualOnly(2)">
+                    <img src="https://jalankebromo.com/wp-content/uploads/2025/08/air-terjun-putuk-truno-prigen-pasuruan-tiket-masuk-dan-lokasi-960x636.webp">
+                    <div class="visual-overlay">
+                        <span class="text-[10px] font-bold tracking-[0.4em] uppercase text-[#d4a373]">Tempat Seru!!</span>
+                        <h4 class="text-xl font-bold uppercase tracking-tighter">Air terjun, bukit, & hutan pinus</h4>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="info-section" class="py-24 border-t border-white/5 relative">
+            <div class="max-w-5xl mx-auto">
+                <div class="grid md:grid-cols-2 gap-16 items-start">
+                    <div>
+                        <span class="text-[#d4a373] text-[10px] font-bold tracking-[0.5em] uppercase mb-4 block">Tentang Destinasi</span>
+                        <h2 class="text-4xl font-bold tracking-tighter uppercase mb-8 leading-tight">Jendela Langit<br>Prigen</h2>
+                        <p class="info-p mb-8 italic">Destinasi wisata alam di lereng Gunung Arjuno, Pasuruan, terkenal dengan pemandangan pegunungan indah, udara sejuk, serta spot foto Instagramable seperti jendela dan gardu pandang.</p>
+                        
+                        <div class="space-y-10">
+                            <div>
+                                <h3 class="info-h3">Lokasi & Akses</h3>
+                                <p class="info-p font-bold text-white/80">Tegal Kidul, Desa Jatiarjo, Kecamatan Prigen, Kabupaten Pasuruan.</p>
+                                <p class="info-p mt-2">Akses jalan cukup sulit (berbatu dan menanjak). Bisa dijangkau dengan jalan kaki (tracking) atau ojek dari bawah.</p>
+                            </div>
+
+                            <div class="grid grid-cols-2 gap-6">
+                                <div>
+                                    <h3 class="info-h3">Jam Operasional</h3>
+                                    <p class="info-p text-sm">Setiap Hari<br><span class="text-white font-bold">24 Jam (Weekend)</span><br>06.00 - 18.00 (Weekdays)</p>
+                                </div>
+                                <div>
+                                    <h3 class="info-h3">Harga Tiket</h3>
+                                    <p class="info-p text-sm">Rp 15.000 / Orang<br><span class="opacity-50 text-[10px]">(Belum termasuk parkir & ojek)</span></p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="space-y-10">
+                        <div class="glass-card p-8">
+                            <h3 class="info-h3">Fasilitas Lengkap</h3>
+                            <p class="info-p mb-6">Area parkir luas, toilet, musala, gazebo, warung, hingga camping ground. Tersedia berbagai gardu pandang: spot jendela, perahu, sarang burung, dan batang pohon.</p>
+                            <div class="grid grid-cols-2 gap-y-2">
+                                <span class="text-[10px] font-bold opacity-50 uppercase tracking-widest">• Camping Area</span>
+                                <span class="text-[10px] font-bold opacity-50 uppercase tracking-widest">• Kedai Kopi</span>
+                                <span class="text-[10px] font-bold opacity-50 uppercase tracking-widest">• Jeep Adventure</span>
+                                <span class="text-[10px] font-bold opacity-50 uppercase tracking-widest">• Toilet & Musholla</span>
+                            </div>
+                        </div>
+
+                        <div class="glass-card p-8 border-[#d4a373]/20">
+                            <h3 class="info-h3 text-[#d4a373]">Tips Berkunjung</h3>
+                            <ul class="text-sm space-y-4 font-light text-white/70">
+                                <li><strong class="text-white">1. Waktu:</strong> Pilih pagi atau sore untuk melihat sunrise/sunset.</li>
+                                <li><strong class="text-white">2. Kendaraan:</strong> Pastikan kendaraan dalam kondisi prima karena medan menanjak.</li>
+                                <li><strong class="text-white">3. Pakaian:</strong> Gunakan pakaian nyaman dan sepatu pendukung tracking.</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="py-20 border-t border-white/5">
+            <div class="glass-card p-10 max-w-2xl mx-auto border-[#d4a373]/30">
+                <h3 class="text-2xl font-bold uppercase mb-8 text-center tracking-tighter">Update Arsip Center</h3>
+                <div class="flex gap-2 mb-8 bg-white/5 p-1 rounded-2xl">
+                    <button onclick="switchForm('USER')" id="btn-user" class="flex-1 py-3 text-[10px] font-black uppercase rounded-xl bg-white text-black transition-all">Upload Pengunjung</button>
+                    <button onclick="switchForm('TEAM')" id="btn-team" class="flex-1 py-3 text-[10px] font-black uppercase rounded-xl text-white/40 transition-all">Upload Project Team</button>
+                </div>
+                <div class="space-y-4">
+                    <div id="form-user" class="space-y-4">
+                        <input type="file" id="fInputUser" accept="image/*" class="w-full text-[10px] file:bg-white file:rounded-full file:px-4 file:py-2">
+                        <input type="text" id="nInputUser" placeholder="NAMA KAMU" class="w-full bg-white/5 border border-white/10 rounded-xl p-4 text-xs">
+                        <textarea id="cInputUser" placeholder="TULIS TESTIMONI KAMU..." class="w-full bg-white/5 border border-white/10 rounded-xl p-4 text-xs h-24"></textarea>
+                        <button onclick="handleUpload('USER')" class="btn-main btn-fill w-full">Kirim Testimoni</button>
+                    </div>
+                    <div id="form-team" class="hidden space-y-4">
+                        <select id="teamMember" class="w-full bg-black border border-blue-500/30 rounded-xl p-4 text-[10px] font-bold uppercase">
+                            <option value="">-- PILIH ANGGOTA --</option>
+                            <option>M SYARIF ABDILLAH</option>
+                            <option>JIHAN ANINDIA PUTRI</option>
+                            <option>UQOILUL IBAD</option>
+                            <option>SHELLA RISKIA</option>
+                            <option>AZMI SAFNA</option>
+                        </select>
+                        <input type="text" id="nInputTeam" placeholder="NAMA PROJECT" class="w-full bg-white/5 border border-white/10 rounded-xl p-4 text-xs">
+                        <input type="url" id="teamLink" placeholder="LINK PROJECT (FIGMA/DRIVE)" class="w-full bg-white/5 border border-white/10 rounded-xl p-4 text-xs">
+                        <input type="file" id="fInputTeam" accept="image/*" class="w-full text-[10px] file:bg-blue-600 file:text-white file:rounded-full file:px-4 file:py-2">
+                        <textarea id="cInputTeam" placeholder="KETERANGAN..." class="w-full bg-white/5 border border-white/10 rounded-xl p-4 text-xs h-24"></textarea>
+                        <button onclick="handleUpload('TEAM')" class="btn-main bg-blue-600 text-white w-full">Simpan Project Team</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="arsip-section" class="py-20 border-t border-white/5">
+            <h2 class="text-xs font-black tracking-[0.6em] uppercase opacity-30 mb-12 text-center">Arsip Pengunjung</h2>
+            <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8" id="user-grid"></div>
+        </section>
+
+        <section id="team-section" class="py-20 border-t border-white/5">
+            <h2 class="text-xs font-black tracking-[0.6em] uppercase opacity-30 mb-12 text-center text-blue-400">Arsip Project Team</h2>
+            <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8" id="team-grid"></div>
+        </section>
+    </main>
+
+    <script>
+        // DATA VISUAL DENGAN SLOT FOTO BANYAK (UNTUK KAMU GANTI)
+        const visualData = [
+            { 
+                tag: "Jeep dan sepeda trill", title: "Bukan hanya tentang tujuan, tapi tentang cerita di setiap jalur yang kamu lewati. Abadikan momen terbaikmu dengan latar alam yang autentik dan kendaraan ikonik.", 
+                photos: [
+                    "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSsAvece89bRkp8Ju48dn1eDQH_iSb0lfrBrg&s",
+                    "https://travelspromo.com/wp-content/uploads/2022/09/Mobil-Jeep-untuk-Berkeliling-Kawasan-Jendela-Langit.-Foto-Gmap-Danu-Kumara.jpg",
+                    "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTTSXhAu6JqXrI3ALJuQckrSBAAnNYpsxIOJg&s",
+                    "https://static.promediateknologi.id/crop/0x0:0x0/0x0/webp/photo/p2/220/2024/03/14/WhatsApp-Image-2024-03-14-at-153116-2870983014.jpeg",
+                    "https://images.unsplash.com/photo-1692317799755-3722f8344742?fm=jpg&q=60&w=3000&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+                    "https://cdn-image.hipwee.com/wp-content/uploads/2020/10/hipwee-images-3-15.jpeg",
+                    "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRqgj0Kd0zjY4zxmVBnhx03XZD9sHUHM3nL7w&s",
+                    "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRLan1ygXkILQAaEoJ2af5XMwoV6PrVVXw73w&s",
+                    "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjl-nJ-l-G0DGyovBMJh4N13PCH9aSNwczwKedZX7gRgxQrwYtTuxFyQV8-rQK-Iv3tdk8vxITLlyNN0bWh5VOH2Uhh1_YTSUnpAzmkgygsWfy9cDnAvY6PqWzJHEDNra2AjYgHb6PL43sPpWqpVX2zAAeNi28__o5NAySrExS7vwawC1bmG7WwZQI5rg/s573/tempat%20wisata%20alam%20jendela%20langit%20prigen%201.png"
+                ] 
+            },
+            { 
+                tag: "Spot foto", title: "Nikmati keindahan alam dari sudut terbaik yang dirancang khusus untuk menghasilkan foto yang indah dan berkesan. Setiap spot menyajikan pemandangan alami yang memanjakan mata.", 
+                photos: [
+                    "https://www.gresiksatu.com/wp-content/uploads/2025/05/suasana-pegunungan-dan-kabut-pagi-di-jendela-langit-prigen.webp",
+                    "https://cdn-image.hipwee.com/wp-content/uploads/2020/10/hipwee-images-1-22.jpeg",
+                    "https://static.promediateknologi.id/crop/0x0:0x0/750x500/webp/photo/2023/06/05/4d9de12a-a8a5-4a02-bfcc-5925e516dcf7-241924006.jpeg",
+                    "https://image.idntimes.com/post/20220930/20220930-180531-329ae2b286ff7799fbbec7d4597d307a-87feb15f96eadd186002dd4851ccd0af.jpg",
+                    "https://liburanyuk.co.id/wp-content/uploads/2020/10/@sherlie_citra-1024x683.jpg",
+                    "https://kilasjatim.com/wp-content/uploads/2024/04/hipwee-images-7-6-678x422-1.jpeg",
+                    "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEiWJvySCySIQXDzzuxdxJcAzLxTBTlHCeuW-gv1LrpnHjEK9rMiVp32vNfVBn777dtGtTUJRz18RCZtRtYvlrU0HgsiT9YOau6On1_q0QNg3MWF8LH1DGVpe3m07QevvVPg2JE2ft4qxAiltZM5FE8yXR1r1uaxxAiproVqIJdisS3pVPBkQTmsQ3z3-A/s819/tempat%20wisata%20alam%20jendela%20langit%20prigen%203.png",
+                    "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSLQa7RwkihXAKUdOPFzCHwdZEBezYs2PAK1A&s",
+                    "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEhMYVGGv0qdbbKGvQf46DKsuQTBskMG9Uqjyweuuu3M_dGtLtct0XwYSgYrIWGZlCFBNmWFRqgMm-klmii3HLC7BGorsCxNAAdUfRXoxXv9nIpDTEpeEmnbAw1BUhzzyQeyiLzVBEVxBZR-/s828/RUTE+WISATA+JENDELA+LANGIT2.png"
+                ] 
+            },
+            { 
+                tag: "Air terjun, Bukit, & Hutan pinus", title: "Temukan keseruan sederhana yang bikin pikiran kembali segar. Dikelilingi alam yang masih asri, tempat ini cocok untuk bersantai, eksplor, dan menikmati waktu tanpa terburu-buru.", 
+                photos: [
+                    "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcScg2x-6njg0ZG9ncFBocXFBUTwNLqodFYvoQ&s",
+                    "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSSBt1kmeM86U3SP1WWgMFMeVkf52jsNH_Zew&s",
+                    "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQzd1paWHMZeGLZ5UuhODZnFc6bltzd5XsMmA&s",
+                    "https://aswajanews.isnuponorogo.org/wp-content/uploads/2024/12/img-20241224-wa00252517172711292667800-608x1024.jpg",
+                    "https://jatimnow.com/po-content/uploads/WhatsApp_Image_2019-09-28_at_06.47.27.jpeg",
+                    "https://assets.promediateknologi.id/crop/0x0:0x0/750x500/webp/photo/2022/11/11/79103405.jpg",
+                    "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT8HDaRWzOhIWHySMaiHH1E6smWWSXK4WYCAw&s",
+                    "https://ik.imagekit.io/tvlk/blog/2020/02/Gunung-Pancar-1200x900-1.jpg?tr=q-70,c-at_max,w-1000,h-600",
+                    "https://superlive.id/storage/superadventure/2019/02/03/cf29cea3fcf6.jpg"
+                ] 
+            }
+        ];
+
+        let database = { USER: [], TEAM: [] };
+
+        function switchForm(type) {
+            const isUser = type === 'USER';
+            document.getElementById('form-user').classList.toggle('hidden', !isUser);
+            document.getElementById('form-team').classList.toggle('hidden', isUser);
+            document.getElementById('btn-user').className = isUser ? "flex-1 py-3 text-[10px] font-black uppercase rounded-xl bg-white text-black" : "flex-1 py-3 text-[10px] font-black uppercase rounded-xl text-white/40";
+            document.getElementById('btn-team').className = !isUser ? "flex-1 py-3 text-[10px] font-black uppercase rounded-xl bg-blue-600 text-white" : "flex-1 py-3 text-[10px] font-black uppercase rounded-xl text-white/40";
+        }
+
+        function handleUpload(cat) {
+            const file = document.getElementById(cat === 'USER' ? 'fInputUser' : 'fInputTeam').files[0];
+            const name = document.getElementById(cat === 'USER' ? 'nInputUser' : 'nInputTeam').value;
+            const desc = document.getElementById(cat === 'USER' ? 'cInputUser' : 'cInputTeam').value;
+            const member = cat === 'TEAM' ? document.getElementById('teamMember').value : null;
+            const link = cat === 'TEAM' ? document.getElementById('teamLink').value : null;
+            if(!file || !name) return alert("Mohon lengkapi data!");
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                database[cat].unshift({ title: name, desc: desc, img: e.target.result, author: member, link: link });
+                renderGrid();
+            };
+            reader.readAsDataURL(file);
+        }
+
+        function renderGrid() {
+            ['USER', 'TEAM'].forEach(cat => {
+                const grid = document.getElementById(cat === 'USER' ? 'user-grid' : 'team-grid');
+                grid.innerHTML = database[cat].length ? '' : `<p class="col-span-full text-center py-20 opacity-20 italic">Belum ada data.</p>`;
+                database[cat].forEach((item, i) => {
+                    grid.innerHTML += `<div onclick="openItem('${cat}', ${i})" class="glass-card p-10 cursor-pointer text-center uppercase"><h3 class="text-xl font-bold truncate">${item.title}</h3><p class="text-[9px] opacity-40 mt-2">Buka File</p></div>`;
+                });
+            });
+        }
+
+        function openItem(cat, i) {
+            const d = database[cat][i];
+            document.getElementById('arc-tag').innerText = cat;
+            document.getElementById('arc-title').innerText = d.title;
+            document.getElementById('arc-author').innerText = d.author || "Pengunjung";
+            document.getElementById('arc-intro').innerText = d.desc;
+            document.getElementById('arc-gallery').innerHTML = `<img src="${d.img}" class="w-full rounded-3xl col-span-full">`;
+            document.getElementById('arc-link-area').innerHTML = d.link ? `<a href="${d.link}" target="_blank" class="bg-blue-600 px-8 py-3 rounded-full text-[10px] font-bold">LINK PROJECT</a>` : "";
+            document.getElementById('full-archive-page').classList.add('archive-active');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function openVisualOnly(i) {
+            const d = visualData[i];
+            document.getElementById('arc-tag').innerText = d.tag;
+            document.getElementById('arc-title').innerText = d.title;
+            document.getElementById('arc-author').innerText = "";
+            let galleryHTML = "";
+            d.photos.forEach(p => { galleryHTML += `<img src="${p}" class="w-full h-64 object-cover rounded-2xl">`; });
+            document.getElementById('arc-gallery').innerHTML = galleryHTML;
+            document.getElementById('full-archive-page').classList.add('archive-active');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeArchive() { 
+            document.getElementById('full-archive-page').classList.remove('archive-active'); 
+            document.body.style.overflow = 'auto';
+        }
+
+        const canvas = document.getElementById('leaf-canvas');
+        const ctx = canvas.getContext('2d');
+        canvas.width = window.innerWidth; canvas.height = window.innerHeight;
+        let leaves = [];
+        class Leaf {
+            constructor() { this.init(); }
+            init() { this.x = Math.random() * canvas.width; this.y = Math.random() * -canvas.height; this.size = Math.random() * 8 + 4; this.speed = Math.random() * 1.2 + 0.5; this.angle = Math.random() * 360; this.spin = Math.random() * 1 - 0.5; this.color = ['#d4a373', '#a98467'][Math.floor(Math.random() * 2)]; }
+            update() { this.y += this.speed; this.angle += this.spin; if (this.y > canvas.height) this.init(); }
+            draw() { ctx.save(); ctx.translate(this.x, this.y); ctx.rotate(this.angle * Math.PI / 180); ctx.fillStyle = this.color; ctx.globalAlpha = 0.2; ctx.beginPath(); ctx.moveTo(0,0); ctx.quadraticCurveTo(this.size, -this.size, this.size*2, 0); ctx.quadraticCurveTo(this.size, this.size, 0, 0); ctx.fill(); ctx.restore(); }
+        }
+        for(let i=0; i<30; i++) leaves.push(new Leaf());
+        function animate() { ctx.clearRect(0,0, canvas.width, canvas.height); leaves.forEach(l => { l.update(); l.draw(); }); requestAnimationFrame(animate); }
+        animate();
+    </script>
+</body>
+</html>
