@@ -332,5 +332,107 @@
         function animate() { ctx.clearRect(0,0, canvas.width, canvas.height); leaves.forEach(l => { l.update(); l.draw(); }); requestAnimationFrame(animate); }
         animate();
     </script>
+    <!-- ===== FIREBASE INTEGRATION (TIDAK MENGUBAH DESAIN) ===== -->
+
+<!-- Firebase SDK -->
+<script src="https://www.gstatic.com/firebasejs/10.14.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.14.0/firebase-firestore-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.14.0/firebase-storage-compat.js"></script>
+
+<script>
+  // 🔴 CONFIG FIREBASE PUNYA KAMU
+  const firebaseConfig = {
+    apiKey: "AIzaSyDmMzwxi7-G1sX1o_8w3sNhBiTPSvemS7o",
+    authDomain: "jendela-langit.firebaseapp.com",
+    projectId: "jendela-langit",
+    storageBucket: "jendela-langit.appspot.com",
+    messagingSenderId: "291504756466",
+    appId: "1:291504756466:web:6d19d76e87908c0c16226b"
+  };
+
+  firebase.initializeApp(firebaseConfig);
+  const db = firebase.firestore();
+  const storage = firebase.storage();
+
+  // ===== GANTI FUNGSI handleUpload TANPA UBAH DESAIN =====
+  window.handleUpload = function(cat) {
+    const isUser = cat === "USER";
+
+    const fileInput = document.getElementById(isUser ? "fInputUser" : "fInputTeam");
+    const nameInput = document.getElementById(isUser ? "nInputUser" : "nInputTeam");
+    const descInput = document.getElementById(isUser ? "cInputUser" : "cInputTeam");
+    const member = isUser ? "Pengunjung" : document.getElementById("teamMember").value;
+    const link = isUser ? "" : document.getElementById("teamLink").value;
+
+    if (!fileInput.files[0] || !nameInput.value) {
+      alert("Mohon lengkapi data!");
+      return;
+    }
+
+    const file = fileInput.files[0];
+    const storageRef = storage.ref(`${cat}/${Date.now()}_${file.name}`);
+
+    storageRef.put(file).then(snapshot => {
+      return snapshot.ref.getDownloadURL();
+    }).then(url => {
+      return db.collection(cat).add({
+        title: nameInput.value,
+        desc: descInput.value,
+        img: url,
+        author: member,
+        link: link,
+        time: firebase.firestore.FieldValue.serverTimestamp()
+      });
+    }).then(() => {
+      alert("Upload berhasil ");
+      fileInput.value = "";
+      nameInput.value = "";
+      descInput.value = "";
+    }).catch(err => {
+      alert("Error: " + err.message);
+    });
+  };
+
+  // ===== LOAD DATA REALTIME (PUBLIK) =====
+  function loadData(cat, gridId) {
+    db.collection(cat).orderBy("time", "desc").onSnapshot(snapshot => {
+      const grid = document.getElementById(gridId);
+      grid.innerHTML = "";
+      snapshot.forEach(doc => {
+        const d = doc.data();
+        grid.innerHTML += `
+          <div onclick="openItemData('${cat}','${doc.id}')" 
+          class="glass-card p-10 cursor-pointer text-center uppercase">
+            <h3 class="text-xl font-bold truncate">${d.title}</h3>
+            <p class="text-[9px] opacity-40 mt-2">Buka File</p>
+          </div>
+        `;
+      });
+    });
+  }
+
+  loadData("USER", "user-grid");
+  loadData("TEAM", "team-grid");
+
+  // ===== BUKA DETAIL ARSIP =====
+  window.openItemData = function(cat, id) {
+    db.collection(cat).doc(id).get().then(doc => {
+      const d = doc.data();
+      document.getElementById('arc-tag').innerText = cat;
+      document.getElementById('arc-title').innerText = d.title;
+      document.getElementById('arc-author').innerText = d.author;
+      document.getElementById('arc-intro').innerText = d.desc;
+      document.getElementById('arc-gallery').innerHTML =
+        `<img src="${d.img}" class="w-full rounded-3xl col-span-full">`;
+      document.getElementById('arc-link-area').innerHTML =
+        d.link ? `<a href="${d.link}" target="_blank"
+        class="bg-blue-600 px-8 py-3 rounded-full text-[10px] font-bold">LINK PROJECT</a>` : "";
+
+      document.getElementById('full-archive-page').classList.add('archive-active');
+      document.body.style.overflow = 'hidden';
+    });
+  };
+</script>
+
 </body>
 </html>
